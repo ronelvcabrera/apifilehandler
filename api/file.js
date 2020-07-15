@@ -1,27 +1,41 @@
 
-var express = require('express');
-var router = express.Router();
+const express = require('express');
 
-router.route('/').get((req, res, next) => {
-	/**
-	 * Upload a file
-	 */
-	console.log('uplaoding file route')
-	res.end(JSON.stringify({ a: 1 }));
-});
+const FileService = require('../services/FileService')
 
-// router.get('/:publicKey', function(req, res, next) {
-// 	/**
-// 	 * Download file
-// 	 */
-// 	console.log('Download file route', req.params)
-// });
+const router = express.Router();
 
-// router.delete('/:privateKey', function(req, res, next) {
-// 	/**
-// 	 * Delete File
-// 	 */
-// 	console.log('Delete file route', req.params)
-// });
+router.route('/')
+	.get((req, res, next) => {
+		/**
+		 * Retrieve all files uploaded
+		 */
+		console.log('Retrieve all files uploaded')
+		res.end(JSON.stringify({ a: 1 }));
+	})
+	.post(async (req, res, next) => {
+		/**
+		 * Upload a file
+		 */
+		console.log('FileService', FileService);
+		let fileService =  new FileService()
+		fileService.uploadFile(req, res)
+	});
+
+router.route('/:publicKey')
+	.get((req, res, next) => {
+		/**
+		 * Download file
+		 */
+		console.log('Download file route', req.params)
+	});
+
+router.route('/:privateKey')
+	.delete((req, res, next) => {
+		/**
+		 * Delete File
+		 */
+		console.log('Delete file route', req.params)
+	});
 
 module.exports = router;

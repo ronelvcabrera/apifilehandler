@@ -3,9 +3,8 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 
 module.exports = async ({ app }) => {
-	app.use(express.json())
 	app.use(cors())
-	app.use(bodyParser.urlencoded({ extended: false }))
+	app.use(bodyParser.json())
 	// app.use(function(req, res, next) {
 	// 	console.log('ERROR OCCURED')
 	// 	var err = new Error('Not Found');

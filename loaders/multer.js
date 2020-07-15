@@ -1,19 +1,20 @@
-const config = require('../config')
+const { fileUpload } = require('../config')
+const path = require('path')
 
 module.exports = (multer) => {
 	const storage = multer.diskStorage({
-		destination: config.uploadFileDir,
+		destination: fileUpload.dir,
 		filename: function(req, file, cb){
 			cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
 		}
 	});
 	const upload = multer({
 		storage: storage,
-		limits:{fileSize: 1000000},
-		fileFilter: function(req, file, cb){
-			checkFileType(file, cb);
-		}
-	}).single('myImage');
+		limits:{fileSize: fileUpload.limit}
+		// fileFilter: function(req, file, cb){
+		// 	// checkFileType(file, cb);
+		// }
+	}).single('myFile');
 	
 	return upload
 }

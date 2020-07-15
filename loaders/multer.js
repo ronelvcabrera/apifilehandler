@@ -10,10 +10,7 @@ module.exports = (multer) => {
 	});
 	const upload = multer({
 		storage: storage,
-		limits:{fileSize: fileUpload.limit}
-		// fileFilter: function(req, file, cb){
-		// 	// checkFileType(file, cb);
-		// }
+		limits: { fileSize: parseInt(fileUpload.limit) }
 	}).single('myFile');
 	
 	return upload

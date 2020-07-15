@@ -2,40 +2,90 @@
 const express = require('express');
 
 const FileService = require('../services/FileService')
+const config = require('../config')
 
 const router = express.Router();
 
 router.route('/')
-	.get((req, res, next) => {
+	.get(async (req, res, next) => {
 		/**
 		 * Retrieve all files uploaded
 		 */
-		console.log('Retrieve all files uploaded')
-		res.end(JSON.stringify({ a: 1 }));
+		let { offset, limit, fields } = req.query
+		offset = parseInt(offset)
+		limit = parseInt(limit)
+		limit = Math.min(limit, 200)
+		fields = fields ? fields.split(',') : undefined
+		try {
+			const data = await FileService.getFiles(offset, limit, fields)
+			res.status(200).json({ 
+				success: 1,
+				data
+			})
+		} catch (err) {
+			res.status(500).json({ 
+				success: 0,
+				err: err
+			})
+		}
 	})
 	.post(async (req, res, next) => {
 		/**
 		 * Upload a file
 		 */
-		console.log('FileService', FileService);
-		let fileService =  new FileService()
-		fileService.uploadFile(req, res)
+		try {
+			let data = await FileService.uploadFile(req, res)
+			res.status(200).json({
+				success: 1,
+				data
+			})
+		} catch (err) {
+			const statusCode = err.statusCode ? err.statusCode:500
+			res.status(statusCode).json({ 
+				success: 0,
+				err: err.message
+			})
+		}
 	});
 
 router.route('/:publicKey')
-	.get((req, res, next) => {
+	.get(async (req, res, next) => {
 		/**
 		 * Download file
 		 */
-		console.log('Download file route', req.params)
+		const { publicKey } = req.params
+		try {
+			let fileName = await FileService.download(publicKey)
+			res.download(`${config.fileUpload.dir}/${fileName}`)
+		} catch (err) {
+			const statusCode = err.statusCode ? err.statusCode:500
+			res.status(statusCode).json({ 
+				success: 0,
+				err: err.message
+			})
+		}
 	});
 
 router.route('/:privateKey')
-	.delete((req, res, next) => {
+	.delete(async (req, res, next) => {
 		/**
 		 * Delete File
 		 */
-		console.log('Delete file route', req.params)
+		let { hard } = req.query
+		const { privateKey } = req.params
+		try {
+			await FileService.deleteFile(privateKey, hard)
+			res.status(200).json({
+				success: 1,
+				message: 'File successfully deleted.'
+			})
+		} catch (err) {
+			const statusCode = err.statusCode ? err.statusCode:500
+			res.status(statusCode).json({ 
+				success: 0,
+				err: err.message
+			})
+		}
 	});
 
 module.exports = router;

@@ -10,12 +10,19 @@ const UploadManagerScheme = mongoose.Schema({
 	originalFileName: {
 		type: String
 	},
+	publicKey: {
+		type: String
+	},
+	privateKey: {
+		type: String
+	},
 	date: {
 		type: Date,
 		default: Date.now
 	},
 	deleted: {
-		type: Date
+		type: Date,
+		default: null
 	}
 })
 

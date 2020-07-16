@@ -58,18 +58,22 @@ module.exports = {
 		});
 	},
 	download: async (publicKey) => {
+		/**
+		 * Download file
+		 */
 		try {
 			const uploads = await UploadManager.find({ publicKey }).exec()
 			if (!uploads.length) {
 				throw new CustomException(404, 'File not found')
 			}
-			return uploads[0].fileName
+			return uploads[0]
 		} catch (err) {
 			if (err instanceof mongoose.Error.CastError) {
 				throw new CustomException(404, 'File not found')	
 			}
 			throw new CustomException(500, 'Error Occurred on retrieving data')
 		}
+		
 	},
 	deleteFile: async (privateKey, hard=0) => {
 		/**
@@ -119,6 +123,9 @@ module.exports = {
 }
 
 function formatFileManager(data) {
+	/**
+	 * Adding download and upload details
+	 */
 	data = JSON.parse(JSON.stringify(data))
 	return data.map((dat) => {
 		dat['downloadURL'] = {

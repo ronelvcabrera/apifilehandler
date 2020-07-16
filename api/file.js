@@ -1,10 +1,14 @@
 
 const express = require('express');
+const router = express.Router();
 
 const FileService = require('../services/FileService')
-const config = require('../config')
+const DownloadLogService = require('../services/DownloadLogService')
 
-const router = express.Router();
+const uploadValidation = require('../middlewares/UploadValidation')
+const downloadValidation = require('../middlewares/DownloadValidation')
+
+const config = require('../config')
 
 router.route('/')
 	.get(async (req, res, next) => {
@@ -18,18 +22,23 @@ router.route('/')
 		fields = fields ? fields.split(',') : undefined
 		try {
 			const data = await FileService.getFiles(offset, limit, fields)
+			console.log('data.length', data.length)
 			res.status(200).json({ 
 				success: 1,
 				data
 			})
 		} catch (err) {
-			res.status(500).json({ 
+			console.log(err)
+			const statusCode = err.statusCode ? err.statusCode:500
+			res.status(statusCode).json({ 
 				success: 0,
-				err: err
+				err: err.message
 			})
 		}
 	})
-	.post(async (req, res, next) => {
+	
+
+router.post('/', uploadValidation, async (req, res, next) => {
 		/**
 		 * Upload a file
 		 */
@@ -48,15 +57,15 @@ router.route('/')
 		}
 	});
 
-router.route('/:publicKey')
-	.get(async (req, res, next) => {
+router.get('/:publicKey', downloadValidation, async (req, res, next) => {
 		/**
 		 * Download file
 		 */
 		const { publicKey } = req.params
 		try {
-			let fileName = await FileService.download(publicKey)
-			res.download(`${config.fileUpload.dir}/${fileName}`)
+			let uploadManager = await FileService.download(publicKey)
+			await DownloadLogService.logDownload(uploadManager._id)
+			res.download(`${config.fileUpload.dir}/${uploadManager.fileName}`)
 		} catch (err) {
 			const statusCode = err.statusCode ? err.statusCode:500
 			res.status(statusCode).json({ 

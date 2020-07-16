@@ -1,3 +1,5 @@
 .env
 node_modules/
 uploads/
+google-cloud/*.json
+google-cloud-account.json

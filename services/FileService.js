@@ -4,11 +4,13 @@ const fs = require('fs')
 const md5 = require('md5');
 
 const multerLoader = require('../loaders/multer')
+const googleCloudLoader = require('../loaders/googleCloud')
 const UploadManager = require('../models/UploadManager')
 const CustomException = require('../exceptions/CustomException')
-const { fileUpload, apiSecret } = require('../config')
+const { fileUpload, apiSecret, provider } = require('../config')
 
 const upload = multerLoader(multer)
+const bucket = googleCloudLoader()
 
 const defaultColumns = ['fileName', 'fileSize', 'fileSize', 'publicKey', 'privateKey', 'date']
 
@@ -28,7 +30,7 @@ module.exports = {
 			throw new CustomException(500, 'Error Occurred on retrieving data')
 		}
 	},
-	uploadFile: (req, res) => {
+	uploadFile: async (req, res) => {
 		/**
 		 * Uploading file and adding to database
 		 */
@@ -121,6 +123,7 @@ module.exports = {
 		}
 	}
 }
+
 
 function formatFileManager(data) {
 	/**

@@ -49,6 +49,7 @@ router.post('/', uploadValidation, async (req, res, next) => {
 				data
 			})
 		} catch (err) {
+			console.log(err)
 			const statusCode = err.statusCode ? err.statusCode:500
 			res.status(statusCode).json({ 
 				success: 0,

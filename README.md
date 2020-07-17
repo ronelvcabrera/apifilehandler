@@ -25,8 +25,10 @@ API File Handler is using Mongo DB as a its database and will need a connection 
 
 ### Google Cloud Integration
 If you plan to upload files to Google Cloud, follow steps below:
-Copy and rename `google-cloud-account.sample.json` `google-cloud-account.json`
-Fill in the data or just copy and paste the contet that was sent to you by Google Cloud Credentials (Service Accounts)
+
+1. Copy and rename `google-cloud-account.sample.json` `google-cloud-account.json`
+
+2. Fill in the data or just copy and paste the contet that was sent to you by Google Cloud Credentials (Service Accounts)
 
 ```
 {

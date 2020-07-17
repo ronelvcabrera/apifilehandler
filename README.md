@@ -1,4 +1,4 @@
-**# API File Handler**
+** API File Handler **
 
 Node js boiler plate express application for handling file upload and download
 
@@ -18,6 +18,9 @@ $ npm install
 ```
 ### Environment Variables
 Copy and rename `.sample.env` to `.env`
+`PROVIDER` - can be `local` for local storage or `google` for Googole Cloud Storage
+
+API File Handler is using Mongo DB as a its database and will need a connection for it. Hence, the environment variables.
 
 
 ### Google Cloud Integration
